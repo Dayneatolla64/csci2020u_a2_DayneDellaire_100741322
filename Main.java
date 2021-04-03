@@ -26,6 +26,10 @@ public class Main extends Application {
         displayMenu(primaryStage);
     }
 
+
+/*
+Displays the menu
+ */
     private void displayMenu(Stage primaryStage){
         primaryStage.setTitle("Assignment 2 By: Dayne Dellaire");
         loadLocalDir(primaryStage);
@@ -60,7 +64,7 @@ public class Main extends Application {
         primaryStage.setScene(mainScene);
         primaryStage.show();
 
-        btApp1.setOnAction(new EventHandler<ActionEvent>() { //New
+        btApp1.setOnAction(new EventHandler<ActionEvent>() { //Displays the file transfer scree
             @Override
             public void handle(ActionEvent actionEvent) {
                 ipField.getText();
@@ -68,13 +72,17 @@ public class Main extends Application {
                 displayScene(primaryStage, ipField.getText(), Integer.parseInt(portField.getText()));
             }
         });
-        btApp2.setOnAction(new EventHandler<ActionEvent>() { //Open
+        btApp2.setOnAction(new EventHandler<ActionEvent>() { //Allows the user to change the file directory
             @Override
             public void handle(ActionEvent actionEvent) {
                 createConfig(primaryStage);
             }
         });
     }
+
+    /*
+    This method will display the file transfer screen
+    */
 
     private void displayScene(Stage primaryStage, String ip, int port){
         primaryStage.setTitle("Shared File v1.0");
@@ -131,6 +139,10 @@ public class Main extends Application {
         });
     }
 
+    /*
+    This method will download the files from the server
+    */
+
     private void downloadFiles(String dir, String fileName, String ip, int port) {
         try {
             Socket socket = new Socket(ip, port);
@@ -150,8 +162,10 @@ public class Main extends Application {
                 byte[] fileContentBytes = new byte[fileContentLength];
                 dataInputStream.readFully(fileContentBytes, 0, fileContentLength);
                 writeToFile(fileName, fileContentBytes, dir);
+                socket.close();
                 return;
             } else {
+                socket.close();
                 writeToFile(fileName, dir);
             }
 
@@ -159,6 +173,10 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
+
+    /*
+    This method will upload the files from the local machine
+    */
 
     private void uploadFiles(String dir, String ip, int port) {
         File uploadFile = new File(dir);
@@ -184,10 +202,16 @@ public class Main extends Application {
 
             dataOutputStream.writeInt(fileContentBytes.length);
             dataOutputStream.write(fileContentBytes);
+            socket.close();
         } catch(IOException e) {
             e.printStackTrace();
         }
     }
+
+    /*
+    This method will get a list of file names from the server then return them
+    to be displayed in the file transfer menu
+    */
 
     private ListView getSharedList(String ip, int port){
         ListView listView = new ListView();
@@ -209,6 +233,7 @@ public class Main extends Application {
             byte[] fileNameBytes = new byte[fileNameLength];
             dataInputStream.readFully(fileNameBytes, 0, fileNameBytes.length);
             fileNames = new String(fileNameBytes);
+            socket.close();
         } catch(IOException e) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Server is offline");
@@ -226,6 +251,10 @@ public class Main extends Application {
         return listView;
     }
 
+    /*
+    This method will read the config file and return the local directory
+    */
+
     private String getLocalDirectory() {
         String dir = "";
 
@@ -236,6 +265,10 @@ public class Main extends Application {
 
         return dir;
     }
+
+    /*
+    This method will return a list of all the file names in the local directory
+    */
 
     private ListView getLocalList(String dir){
         File localDirectory = new File(dir);
@@ -251,11 +284,20 @@ public class Main extends Application {
         return listView;
     }
 
+    /*
+    This method will check if a config exsists and if it doesnt it will prompt the user
+    to select a local directory then it will make a config containing the absolute path to that directory
+    */
+
     private void loadLocalDir(Stage stage){
         if(!getConfig()){
             createConfig(stage);
         }
     }
+
+    /*
+    creates a config with the user selected directory
+    */
 
     private void createConfig(Stage stage){
         try {
@@ -267,10 +309,18 @@ public class Main extends Application {
         } catch (IOException e) {System.out.println("Error: Could not create config");}
     }
 
+    /*
+    checks if the config exsists
+    */
+
     private boolean getConfig(){
         File config = new File("config.txt");
         return config.exists();
     }
+
+    /*
+    Allows the user to select a directory then returns the absolute path
+    */
 
     private String ChooseDirectory(Stage stage){
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -285,6 +335,11 @@ public class Main extends Application {
         return selectedDirectory.getAbsolutePath();
     }
 
+    /*
+    create a file at a certain directory with the filename
+    (no contents)
+    */
+
     public void writeToFile(String fileName, String dir) {
         File file = new File(dir + "/" + fileName);
         try {
@@ -293,6 +348,11 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
+
+    /*
+    create a file at a certain directory with the filename
+    (with contents)
+    */
 
     public void writeToFile(String fileName, byte[] fileContentBytes, String dir) {
         File file = new File(dir + "/" + fileName);

@@ -16,6 +16,7 @@ public class ClientConnectionHandler extends Thread{
         this.socket = socket;
         this.dir = dir;
 
+        //Starts an IO data stream to read files
         try{
             dataInputStream = new DataInputStream(socket.getInputStream());
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
@@ -35,6 +36,13 @@ public class ClientConnectionHandler extends Thread{
             e.printStackTrace();
         }
     }
+
+    /*
+    Waits for a command from the socket then interprets it then does the following methods:
+    UPLOAD
+    DOWNLOAD
+    DIR
+    */
 
     private void processCommand(){
         String command = null;
@@ -57,6 +65,11 @@ public class ClientConnectionHandler extends Thread{
             refreshUser();
         }
     }
+
+    /*
+    Waits for a filename to be sent then checks if that file exsists and sends that files contents
+    to the socket
+    */
 
     private void sendFile() {
         try {
@@ -85,6 +98,10 @@ public class ClientConnectionHandler extends Thread{
         }
     }
 
+    /*
+    Sends a string containing all the fileNames in the shared folder
+    */
+
     public void refreshUser() {
         File directory = new File(dir);
 
@@ -109,6 +126,10 @@ public class ClientConnectionHandler extends Thread{
             }
         }
     }
+
+    /*
+    Recieves a file and a filename and creates it in the shared directory
+    */
 
     public void recieveFile() {
         try {
@@ -137,6 +158,11 @@ public class ClientConnectionHandler extends Thread{
         }
     }
 
+    /*
+    create a file at a certain directory with the filename
+    (no contents)
+    */
+
     public void writeToFile(String fileName) {
         File file = new File(dir + "/" + fileName);
         try {
@@ -145,6 +171,11 @@ public class ClientConnectionHandler extends Thread{
             e.printStackTrace();
         }
     }
+
+    /*
+    create a file at a certain directory with the filename
+    (with contents)
+    */
 
     public void writeToFile(String fileName, byte[] fileContentBytes) {
         File file = new File(dir + "/" + fileName);
