@@ -12,7 +12,8 @@ public class ServerMulti {
     protected ServerSocket serverSocket     = null;
     protected ClientConnectionHandler[] threads    = null;
     protected int numClients                = 0;
-    protected String dir = "C:/Users/rdell/Desktop/Daynes_Server/Shared";
+    protected String dir = "Shared";
+    
     public static int SERVER_PORT = 25565;
     public static int MAX_CLIENTS = 100;
 
